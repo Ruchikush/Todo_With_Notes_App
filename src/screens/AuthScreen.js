@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -24,6 +24,17 @@ const AuthScreen = ({navigation}) => {
     password: '',
     rememberMe: false,
   });
+
+  useEffect(() => {
+    checkExistingAuth();
+  }, []);
+
+  const checkExistingAuth = async () => {
+    const user = await getUser();
+    if (user) {
+      navigation.replace('Main');
+    }
+  };
 
   const validateForm = () => {
     const newErrors = {};

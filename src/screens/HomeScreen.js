@@ -57,14 +57,18 @@ const HomeScreen = ({ navigation, route }) => {
         {
           text: 'Logout',
           onPress: async () => {
-            const success = await clearUserData();
-            if (success) {
-            navigation.replace('Auth');
-            } else {
-              Alert.alert('Error', 'Failed to logout');
+            try {
+              const success = await clearUserData();
+              if (success) {
+                navigation.logout ? navigation.logout() : navigation.navigate('Auth')
+              } else {
+                Alert.alert('Error', 'Failed to logout');
+              }
+            } catch (error) {
+              Alert.alert('Error', 'An error occurred during logout');
             }
           }
-        }
+        },
       ]
     );
   };
@@ -118,8 +122,7 @@ const HomeScreen = ({ navigation, route }) => {
             <Text style={{ fontSize: 16, color: '#636e72', marginTop: 4 }}>Good evening!</Text>
           </View>
           <TouchableOpacity 
-          //  onPress={() => navigation.navigate('Auth')}
-          onPress={() => navigation.logout ? navigation.logout() : navigation.navigate('Auth')}
+            onPress={handleLogout}
             style={{ backgroundColor: '#fff', padding: 10, borderRadius: 12, elevation: 2 }}
           >
             <Icon name="logout" size={24} color="#2d3436" />

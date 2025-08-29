@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const TASKS_KEY = '@tasks';
 const NOTES_KEY = '@notes';
 const USER_KEY = '@user';
-const USERS_KEY = '@users'; // New key for storing multiple users
+const USERS_KEY = '@users'; 
 
 export const storeData = async (key, value) => {
   try {
@@ -103,7 +103,7 @@ export const getUser = async () => {
 // Clear all user data on logout
 export const clearUserData = async () => {
   try {
-    await AsyncStorage.removeItem(USER_KEY);
+    await AsyncStorage.multiRemove([USER_KEY, TASKS_KEY, NOTES_KEY]);
     console.log('User data cleared successfully');
     return true;
   } catch (e) {
