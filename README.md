@@ -11,6 +11,9 @@ npm install
 npx react-native run-android   # For Android
 npx react-native run-ios 
 
+## Animation 
+branch - "feature/animation" - checkout to this branch
+
 ## 🚀 Features
 
 ### 🔑 Authentication
@@ -20,7 +23,8 @@ npx react-native run-ios
 - Prevents **duplicate user registration**.
 - Handles **edge cases** like:
   - Already registered user.
-  - After login, user cannot directly navigate back to login screen without logging out and Vice-Versa.
+  - password validations
+  - After logout user directly navigate to the login page, after refresh the page user still on login page.
 
 ### 📝 To-Do
 - **Home Screen** with a task list (FlatList).
@@ -36,6 +40,7 @@ npx react-native run-ios
 
 ### 🗒️ Notes
 - A dedicated **Notes screen/tab** to add free-form notes.
+- user able to create, edit and delete the notes.
 - Stored in **AsyncStorage** for persistence.
 
 ### ⚙️ Technical Implementation
@@ -43,12 +48,12 @@ npx react-native run-ios
 - **React Native core components** (View, Text, FlatList, TouchableOpacity, TextInput, etc.).
 - **AsyncStorage** for persistent local storage.
 - **Reusable components** for clean code.
-- **Animations** for adding/deleting tasks.
-- **Search & Filter** for tasks (e.g., show only completed).
+- **Animations** added on the Task page - If you want to see the animation checkout to "feature/animation" branch and see the changes.
+- **Search & Filter** for tasks, this also support search after applying complete, pending filter.
 
 ### 🌐 API Integration
-- Integrated with a mock API (`https://jsonplaceholder.typicode.com/`) to demonstrate API handling.
-- Example: Fetch tasks or notes as dummy data.
+- Integrated with a mock API (`https://jsonplaceholder.typicode.com/`) to demonstrate API handling.(get, put, post, delete)
+- Example: Fetch tasks and handel notes data in local storage.
 
 ---
 
