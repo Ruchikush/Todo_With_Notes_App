@@ -1,4 +1,3 @@
-// AuthScreen.js
 import React, {useState} from 'react';
 import {
   View,
@@ -62,7 +61,7 @@ const AuthScreen = ({navigation}) => {
         Alert.alert('Success', 'Logged in successfully');
       } else {
         // Signup logic
-        await storeUser(formData);
+      await storeUser(formData);
         Alert.alert('Success', 'Account created successfully');
       }
 
@@ -103,13 +102,13 @@ const AuthScreen = ({navigation}) => {
                   styles.inputContainer,
                   errors.name && styles.inputError,
                 ]}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Full Name"
-                  placeholderTextColor="#696969"
-                  value={formData.name}
-                  onChangeText={text => setFormData({...formData, name: text})}
-                />
+              <TextInput
+                style={styles.input}
+                placeholder="Full Name"
+                placeholderTextColor="#696969"
+                value={formData.name}
+                onChangeText={text => setFormData({...formData, name: text})}
+              />
               </View>
               {errors.name && (
                 <Text style={styles.errorText}>{errors.name}</Text>
@@ -124,15 +123,15 @@ const AuthScreen = ({navigation}) => {
                 styles.inputContainer,
                 errors.email && styles.inputError,
               ]}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter Email"
-                placeholderTextColor="#696969"
-                keyboardType="email-address"
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Email"
+              placeholderTextColor="#696969"
+              keyboardType="email-address"
                 autoCapitalize="none"
-                value={formData.email}
-                onChangeText={text => setFormData({...formData, email: text})}
-              />
+              value={formData.email}
+              onChangeText={text => setFormData({...formData, email: text})}
+            />
             </View>
             {errors.email && (
               <Text style={styles.errorText}>{errors.email}</Text>
@@ -146,24 +145,24 @@ const AuthScreen = ({navigation}) => {
                 styles.inputContainerpass,
                 errors.password && styles.inputError,
               ]}>
-              <TextInput
-                style={[styles.input, {flex: 1}]}
-                placeholder="Password"
-                placeholderTextColor="#696969"
-                secureTextEntry={!showPassword}
-                value={formData.password}
+            <TextInput
+              style={[styles.input, {flex: 1}]}
+              placeholder="Password"
+              placeholderTextColor="#696969"
+              secureTextEntry={!showPassword}
+              value={formData.password}
                 onChangeText={text =>
                   setFormData({...formData, password: text})
                 }
-              />
+            />
 
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <Icon
-                  name={showPassword ? 'visibility' : 'visibility-off'}
-                  size={22}
-                  color="#202124"
-                />
-              </TouchableOpacity>
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+              <Icon
+                name={showPassword ? 'visibility' : 'visibility-off'}
+                size={22}
+                color="#202124"
+              />
+            </TouchableOpacity>
             </View>
             {errors.password && (
               <Text style={styles.errorText}>{errors.password}</Text>
@@ -200,7 +199,7 @@ const AuthScreen = ({navigation}) => {
             <Text style={styles.orText}>OR</Text>
             <View style={styles.divider} />
           </View>
-
+         
           {/* Social Buttons Row */}
           <View style={styles.socialRow}>
             <TouchableOpacity style={styles.socialButton}>

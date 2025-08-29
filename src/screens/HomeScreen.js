@@ -59,7 +59,7 @@ const HomeScreen = ({ navigation, route }) => {
           onPress: async () => {
             const success = await clearUserData();
             if (success) {
-              navigation.replace('Auth');
+            navigation.replace('Auth');
             } else {
               Alert.alert('Error', 'Failed to logout');
             }

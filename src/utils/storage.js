@@ -1,4 +1,3 @@
-// utils/storage.js
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TASKS_KEY = '@tasks';
@@ -6,7 +5,6 @@ const NOTES_KEY = '@notes';
 const USER_KEY = '@user';
 const USERS_KEY = '@users'; // New key for storing multiple users
 
-// Existing functions remain the same
 export const storeData = async (key, value) => {
   try {
     const jsonValue = JSON.stringify(value);
@@ -26,7 +24,33 @@ export const getData = async (key) => {
   }
 };
 
-// ... keep all existing functions for tasks and notes
+export const removeData = async (key) => {
+  try {
+    await AsyncStorage.removeItem(key);
+  } catch (e) {
+    console.error('Error removing data:', e);
+  }
+};
+
+export const storeTasks = async (tasks) => {
+  await storeData(TASKS_KEY, tasks);
+};
+
+export const getTasks = async () => {
+  return await getData(TASKS_KEY) || [];
+};
+
+export const storeNotes = async (notes) => {
+  await storeData(NOTES_KEY, notes);
+};
+
+export const getNotes = async () => {
+  return await getData(NOTES_KEY) || [];
+};
+
+// export const storeUser = async (user) => {
+//   await storeData(USER_KEY, user);
+// };
 
 // Updated user functions
 export const storeUser = async (user) => {
