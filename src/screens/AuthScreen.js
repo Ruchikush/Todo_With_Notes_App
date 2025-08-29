@@ -1,3 +1,4 @@
+// AuthScreen.js
 import React, {useState} from 'react';
 import {
   View,
@@ -11,12 +12,13 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AntIcon from 'react-native-vector-icons/AntDesign';
-import {storeUser} from '../utils/storage';
+import {storeUser, authenticateUser} from '../utils/storage';
 import colors from '../constants/colors';
 
 const AuthScreen = ({navigation}) => {
   const [isLogin, setIsLogin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -24,21 +26,53 @@ const AuthScreen = ({navigation}) => {
     rememberMe: false,
   });
 
-  const handleSubmit = async () => {
-    if (!formData.email || !formData.password || (!isLogin && !formData.name)) {
-      Alert.alert('Error', 'Please fill all required fields');
-      return;
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Name validation (only for signup)
+    if (!isLogin && !formData.name.trim()) {
+      newErrors.name = 'Name is required';
     }
 
+    // Email validation
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
+    }
+
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
+
     try {
-      await storeUser(formData);
+      if (isLogin) {
+        // Login logic
+        await authenticateUser(formData.email, formData.password);
+        Alert.alert('Success', 'Logged in successfully');
+      } else {
+        // Signup logic
+        await storeUser(formData);
+        Alert.alert('Success', 'Account created successfully');
+      }
+
       if (navigation.replace) {
         navigation.replace('Main');
       } else {
         navigation.navigate('Main');
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to save user data');
+      Alert.alert('Error', error.message);
     }
   };
 
@@ -63,48 +97,77 @@ const AuthScreen = ({navigation}) => {
         <View style={styles.card}>
           {/* Full Name */}
           {!isLogin && (
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Full Name"
-                placeholderTextColor="#696969"
-                value={formData.name}
-                onChangeText={text => setFormData({...formData, name: text})}
-              />
+            <View>
+              <View
+                style={[
+                  styles.inputContainer,
+                  errors.name && styles.inputError,
+                ]}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Full Name"
+                  placeholderTextColor="#696969"
+                  value={formData.name}
+                  onChangeText={text => setFormData({...formData, name: text})}
+                />
+              </View>
+              {errors.name && (
+                <Text style={styles.errorText}>{errors.name}</Text>
+              )}
             </View>
           )}
 
           {/* Email */}
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter Email"
-              placeholderTextColor="#696969"
-              keyboardType="email-address"
-              value={formData.email}
-              onChangeText={text => setFormData({...formData, email: text})}
-            />
+          <View>
+            <View
+              style={[
+                styles.inputContainer,
+                errors.email && styles.inputError,
+              ]}>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter Email"
+                placeholderTextColor="#696969"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={formData.email}
+                onChangeText={text => setFormData({...formData, email: text})}
+              />
+            </View>
+            {errors.email && (
+              <Text style={styles.errorText}>{errors.email}</Text>
+            )}
           </View>
 
           {/* Password */}
-         
-          <View style={styles.inputContainerpass}>
-            <TextInput
-              style={[styles.input, {flex: 1}]}
-              placeholder="Password"
-              placeholderTextColor="#696969"
-              secureTextEntry={!showPassword}
-              value={formData.password}
-              onChangeText={text => setFormData({...formData, password: text})}
-            />
-
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-              <Icon
-                name={showPassword ? 'visibility' : 'visibility-off'}
-                size={22}
-                color="#202124"
+          <View>
+            <View
+              style={[
+                styles.inputContainerpass,
+                errors.password && styles.inputError,
+              ]}>
+              <TextInput
+                style={[styles.input, {flex: 1}]}
+                placeholder="Password"
+                placeholderTextColor="#696969"
+                secureTextEntry={!showPassword}
+                value={formData.password}
+                onChangeText={text =>
+                  setFormData({...formData, password: text})
+                }
               />
-            </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <Icon
+                  name={showPassword ? 'visibility' : 'visibility-off'}
+                  size={22}
+                  color="#202124"
+                />
+              </TouchableOpacity>
+            </View>
+            {errors.password && (
+              <Text style={styles.errorText}>{errors.password}</Text>
+            )}
           </View>
 
           {/* Remember me */}
@@ -138,8 +201,6 @@ const AuthScreen = ({navigation}) => {
             <View style={styles.divider} />
           </View>
 
-          {/* Social Buttons */}
-         
           {/* Social Buttons Row */}
           <View style={styles.socialRow}>
             <TouchableOpacity style={styles.socialButton}>
@@ -160,7 +221,11 @@ const AuthScreen = ({navigation}) => {
                 ? "Don't have an account? "
                 : 'Already have an account? '}
             </Text>
-            <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
+            <TouchableOpacity
+              onPress={() => {
+                setIsLogin(!isLogin);
+                setErrors({}); // Clear errors when switching modes
+              }}>
               <Text style={styles.switchLink}>
                 {isLogin ? 'Sign up' : 'Sign in'}
               </Text>
@@ -267,6 +332,17 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     borderWidth: 1,
     borderColor: '#ddd',
+  },
+
+  inputError: {
+    borderColor: 'red',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: -10,
+    marginBottom: 15,
+    marginLeft: 15,
   },
 
   socialText: {
