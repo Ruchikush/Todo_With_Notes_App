@@ -3,7 +3,6 @@ import { View, Text, FlatList, TouchableOpacity, ScrollView, Alert } from 'react
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import TaskCard from '../components/TaskCard';
 import styles from '../constants/styles';
-import colors from '../constants/colors';
 import { getTasks, storeTasks, getUser, clearUserData } from '../utils/storage';
 import { getPosts } from '../utils/api';
 
@@ -31,8 +30,8 @@ const HomeScreen = ({ navigation, route }) => {
       setTasks(storedTasks);
     } else {
       const sampleTasks = [
-        { id: '1', title: 'Google Meet', description: 'Morning standup with team', time: '03:30-05:00 AM', completed: false },
-        { id: '2', title: 'Stack', description: 'Design Poster for Home screen', time: '03:30-09:30 AM', completed: false },
+        { id: '1', title: 'Google Meet', description: 'Morning standup with team', completed: false },
+        { id: '2', title: 'Stack', description: 'Design Poster for Home screen', completed: false },
       ];
       setTasks(sampleTasks);
       await storeTasks(sampleTasks);
@@ -180,6 +179,11 @@ const handleLogout = async () => {
           <TouchableOpacity>
             <Text style={{ fontSize: 14, color: '#6c5ce7', fontWeight: '600' }}>Upcoming</Text>
           </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('TaskForm', { isEdit: false })}>
+            <View  style={styles.fabButton}>
+                <Icon name="add" size={25} color="#ffff" />
+            </View>
+          </TouchableOpacity>
         </View>
 
         {/* Filter Buttons */}
@@ -243,26 +247,6 @@ const handleLogout = async () => {
             scrollEnabled={false}
           />
         )}
-
-        {/* Add Task Button */}
-        <View style={{marginBottom:20}}>
-        <TouchableOpacity 
-          onPress={() => navigation.navigate('TaskForm', { isEdit: false })}
-          style={{
-            backgroundColor: '#6c5ce7',
-            paddingVertical: 16,
-            borderRadius: 12,
-            alignItems: 'center',
-            marginTop: 20,
-            marginBottom: 10,
-            flexDirection: 'row',
-            justifyContent: 'center'
-          }}
-        >
-          <Icon name="add" size={20} color="#fff" />
-          <Text style={{ color: '#fff', fontWeight: '600', marginLeft: 8 }}>Add New Task</Text>
-        </TouchableOpacity>
-        </View>
       </ScrollView>
     </View>
   );

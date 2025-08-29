@@ -80,4 +80,14 @@ export default StyleSheet.create({
   inactiveTab: {
     color: colors.gray,
   },
+  fabButton: {
+    backgroundColor: '#6c5ce7',
+    padding: 2,
+    borderRadius: 30,
+    elevation: 5, 
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  }
 });
