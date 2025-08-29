@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, ScrollView, Alert, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import TaskCard from '../components/TaskCard';
 import styles from '../constants/styles';
@@ -10,6 +10,7 @@ const HomeScreen = ({ navigation, route }) => {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('all');
   const [user, setUser] = useState({ name: 'User' });
+  const [searchQuery, setSearchQuery] = useState(''); // New state for search query
 
   useEffect(() => {
     loadUserData();
@@ -44,33 +45,43 @@ const HomeScreen = ({ navigation, route }) => {
   };
 
   // Handle logout
-const handleLogout = async () => {
-  Alert.alert(
-    'Logout',
-    'Are you sure you want to logout?',
-    [
-      {
-        text: 'Cancel',
-        style: 'cancel'
-      },
-      {
-        text: 'Logout',
-        onPress: async () => {
-          try {
-            await clearUserData();
-            navigation.replace('Auth');
-          } catch (error) {
-            console.log('Logout error:', error);
+  const handleLogout = async () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        },
+        {
+          text: 'Logout',
+          onPress: async () => {
+            try {
+              await clearUserData();
+              navigation.replace('Auth');
+            } catch (error) {
+              console.log('Logout error:', error);
+            }
           }
-        }
-      },
-    ]
-  );
-};
+        },
+      ]
+    );
+  };
+
+  // Filter tasks based on both filter status and search query
   const filteredTasks = tasks.filter(task => {
-    if (filter === 'completed') return task.completed;
-    if (filter === 'pending') return !task.completed;
-    return true;
+    // First apply the status filter (all, completed, pending)
+    let statusMatch = true;
+    if (filter === 'completed') statusMatch = task.completed;
+    if (filter === 'pending') statusMatch = !task.completed;
+    
+    // Then apply the search filter if there's a query
+    const searchMatch = searchQuery === '' || 
+      task.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      task.description.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return statusMatch && searchMatch;
   });
 
   const toggleTask = async (id) => {
@@ -107,8 +118,8 @@ const handleLogout = async () => {
   const completedCount = tasks.filter(task => task.completed).length;
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#f8f9fa',marginTop:20 ,}}>
-      <ScrollView style={{ padding: 20, }}>
+    <View style={{ flex: 1, backgroundColor: '#f8f9fa', marginTop: 20 }}>
+      <ScrollView style={{ padding: 20 }}>
         {/* Header Section */}
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 25 }}>
           <View>
@@ -180,10 +191,35 @@ const handleLogout = async () => {
             <Text style={{ fontSize: 14, color: '#6c5ce7', fontWeight: '600' }}>Upcoming</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('TaskForm', { isEdit: false })}>
-            <View  style={styles.fabButton}>
-                <Icon name="add" size={25} color="#ffff" />
+            <View style={styles.fabButton}>
+              <Icon name="add" size={25} color="#ffff" />
             </View>
           </TouchableOpacity>
+        </View>
+
+        {/* Search Bar */}
+        <View style={{ 
+          flexDirection: 'row', 
+          alignItems: 'center', 
+          backgroundColor: '#fff', 
+          borderRadius: 12, 
+          paddingHorizontal: 15,
+          paddingVertical: 8,
+          marginBottom: 15,
+          elevation: 2
+        }}>
+          <Icon name="search" size={20} color="#636e72" />
+          <TextInput
+            style={{ flex: 1, marginLeft: 10, fontSize: 16 }}
+            placeholder="Search tasks..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          {searchQuery !== '' && (
+            <TouchableOpacity onPress={() => setSearchQuery('')}>
+              <Icon name="close" size={20} color="#636e72" />
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Filter Buttons */}
@@ -230,7 +266,9 @@ const handleLogout = async () => {
         {filteredTasks.length === 0 ? (
           <View style={{ alignItems: 'center', marginTop: 40, paddingVertical: 30 }}>
             <Icon name="check-circle-outline" size={60} color="#dfe6e9" />
-            <Text style={{ fontSize: 16, color: '#b2bec3', marginTop: 15 }}>No tasks found</Text>
+            <Text style={{ fontSize: 16, color: '#b2bec3', marginTop: 15 }}>
+              {searchQuery ? 'No tasks match your search' : 'No tasks found'}
+            </Text>
           </View>
         ) : (
           <FlatList
