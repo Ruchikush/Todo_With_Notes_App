@@ -29,6 +29,16 @@ const AuthScreen = ({navigation}) => {
     checkExistingAuth();
   }, []);
 
+  useEffect(() => {
+  const checkExistingAuth = async () => {
+    const user = await getUser();
+    if (user) {
+      navigation.replace('Main');
+    }
+  };
+  checkExistingAuth();
+}, [navigation]);
+
   const checkExistingAuth = async () => {
     const user = await getUser();
     if (user) {

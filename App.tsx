@@ -5,7 +5,7 @@ import HomeScreen from './src/screens/HomeScreen';
 import TaskFormScreen from './src/screens/TaskFormScreen';
 import NotesScreen from './src/screens/NotesScreen';
 import CustomTabBar from './src/components/CustomTabBar';
-import { getUser, storeUser } from './src/utils/storage';
+import { getUser } from './src/utils/storage';
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -52,6 +52,8 @@ const App = () => {
       replace: (screen: string) => {
         if (screen === 'Main') {
           handleLogin();
+        } else if (screen === 'Auth') {
+          handleLogout();
         }
       }
     };

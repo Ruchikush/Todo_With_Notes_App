@@ -45,34 +45,29 @@ const HomeScreen = ({ navigation, route }) => {
   };
 
   // Handle logout
-  const handleLogout = async () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel'
-        },
-        {
-          text: 'Logout',
-          onPress: async () => {
-            try {
-              const success = await clearUserData();
-              if (success) {
-                navigation.logout ? navigation.logout() : navigation.navigate('Auth')
-              } else {
-                Alert.alert('Error', 'Failed to logout');
-              }
-            } catch (error) {
-              Alert.alert('Error', 'An error occurred during logout');
-            }
+const handleLogout = async () => {
+  Alert.alert(
+    'Logout',
+    'Are you sure you want to logout?',
+    [
+      {
+        text: 'Cancel',
+        style: 'cancel'
+      },
+      {
+        text: 'Logout',
+        onPress: async () => {
+          try {
+            await clearUserData();
+            navigation.replace('Auth');
+          } catch (error) {
+            console.log('Logout error:', error);
           }
-        },
-      ]
-    );
-  };
-
+        }
+      },
+    ]
+  );
+};
   const filteredTasks = tasks.filter(task => {
     if (filter === 'completed') return task.completed;
     if (filter === 'pending') return !task.completed;
