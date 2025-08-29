@@ -6,6 +6,7 @@ import TaskFormScreen from './src/screens/TaskFormScreen';
 import NotesScreen from './src/screens/NotesScreen';
 import CustomTabBar from './src/components/CustomTabBar';
 import { getUser } from './src/utils/storage';
+import NoteFormScreen from './src/screens/NoteFormScreen';
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -66,7 +67,7 @@ const App = () => {
       case 'TaskForm':
         return <TaskFormScreen navigation={navigation} route={{ params: screenParams }} />;
       case 'NoteForm':
-        return <TaskFormScreen navigation={navigation} route={{ params: screenParams }} />;
+        return <NoteFormScreen  navigation={navigation} route={{ params: screenParams }} />;
       case 'Main':
       default:
         if (activeTab === 'Home') {
